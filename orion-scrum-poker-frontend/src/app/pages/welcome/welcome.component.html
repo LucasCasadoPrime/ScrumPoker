@@ -1,0 +1,20 @@
+<div class="welcome-page">
+
+  <form class="example-form">
+    <mat-form-field class="example-full-width">
+      <mat-label>Entrez votre nom ici</mat-label>
+      <input matInput
+             [(ngModel)]="name"
+             [ngModelOptions]="{standalone: true}"
+             placeholder="Ex. Lucas Casado">
+    </mat-form-field>
+  </form>
+
+  <button mat-fab extended color="accent"
+          (click)="onSubmit()"
+  >
+    <mat-icon>done</mat-icon>
+    Soumettre
+  </button>
+
+</div>

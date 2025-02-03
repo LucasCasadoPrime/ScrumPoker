@@ -1,0 +1,28 @@
+.welcome-page {
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 80px);
+
+  .example-form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+    padding-bottom: 3%;
+  }
+
+  .example-full-width {
+    width: 100%;
+  }
+
+  @media screen and (max-width: 768px) {
+
+    .example-form {
+      width: 90%;
+    }
+
+  }
+
+}
