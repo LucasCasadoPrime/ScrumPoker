@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-export default function Room({ roomId }: { roomId: string }) {
+export default function Room({ params }: { params: { roomId: string, roomName: string } }) {
     const searchParams = useSearchParams();
     const userName = searchParams.get('username');
     const [votes, setVotes] = useState<Record<string, string>>({});
@@ -15,7 +15,7 @@ export default function Room({ roomId }: { roomId: string }) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ roomId: roomId, userName, vote }),
+            body: JSON.stringify({ roomId: params.roomId, roomName: params.roomName, userName, vote }),
         });
         const data = await response.json();
         setVotes(data.votes);
@@ -28,15 +28,13 @@ export default function Room({ roomId }: { roomId: string }) {
 
     useEffect(() => {
         const fetchVotes = async () => {
-            const response = await fetch(`/api/votes?roomId=${roomId}`);
+            const response = await fetch(`/api/votes?roomId=${params.roomId}`);
             const data = await response.json();
             setVotes(data.votes);
         };
 
-        fetchVotes();
-        const interval = setInterval(fetchVotes, 5000);
-        return () => clearInterval(interval);
-    }, [roomId]);
+        fetchVotes().then();
+    }, [revealed]);
 
     return (
         <div className="space-y-4">
