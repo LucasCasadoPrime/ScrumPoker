@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import { Message } from '../model/message';
 
 
-const CHAT_URL = "ws://localhost:5000";
+const CHAT_URL = "ws://scrum-poker-backend-7s0wrg1gi-lucascasadoprimes-projects.vercel.app:5000";
 
 @Injectable({
   providedIn: 'root'
