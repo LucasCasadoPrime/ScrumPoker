@@ -2,79 +2,78 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { motion } from 'framer-motion';
+import io from "socket.io-client";
 
-export default function Room({ params }: { params: { roomId: string, roomName: string } }) {
+export default function Room({ params }: { params: { roomId: string } }) {
     const searchParams = useSearchParams();
-    const userName = searchParams.get('username');
+    const userName = searchParams.get('username') || "Invité";
     const [votes, setVotes] = useState<Record<string, string>>({});
     const [revealed, setRevealed] = useState(false);
+    const [selectedVote, setSelectedVote] = useState<string | null>(null);
 
-    const handleVote = async (vote: string) => {
-        const response = await fetch(`/api/vote`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ roomId: params.roomId, roomName: params.roomName, userName, vote }),
+    const socket = io();
+
+    useEffect(() => {
+        socket.emit('join-room', { roomId: params.roomId, userName });
+
+        socket.on('votes', (votes: Record<string, string>) => {
+            setVotes(votes);
         });
-        const data = await response.json();
-        setVotes(data.votes);
+
+        return () => {
+            socket.disconnect();
+        };
+    }, [params.roomId, userName]);
+
+    const handleVote = (vote: string) => {
+        setSelectedVote(vote);
+        socket.emit('vote', vote);
+    };
+
+    const revealVotes = () => {
+        setRevealed(true);
     };
 
     const resetVotes = () => {
         setRevealed(false);
-        setVotes({});
+        setSelectedVote(null);
+        socket.emit('reset-votes');
     };
 
-    useEffect(() => {
-        const fetchVotes = async () => {
-            const response = await fetch(`/api/votes?roomId=${params.roomId}`);
-            const data = await response.json();
-            setVotes(data.votes);
-        };
-
-        fetchVotes().then();
-    }, [revealed]);
-
     return (
-        <div className="space-y-4">
-            <p>Bienvenue, {userName}!</p>
+        <div className="flex flex-col items-center space-y-4">
+            <h1 className="text-2xl font-bold">Room {params.roomId}</h1>
+            <p className="text-lg">Welcome, {userName}!</p>
             <div className="flex space-x-4">
-                {['1', '2', '3', '5', '8', '13'].map((vote) => (
-                    <button
+                {['1', '2', '3', '5', '8', '13', '21', '34', '55', '89', '?'].map((vote) => (
+                    <motion.button
                         key={vote}
                         onClick={() => handleVote(vote)}
-                        className="bg-blue-500 text-white px-4 py-2 rounded"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className={`px-4 py-2 border rounded ${selectedVote === vote ? 'bg-blue-500 text-white' : 'bg-white'}`}
                     >
                         {vote}
-                    </button>
+                    </motion.button>
                 ))}
             </div>
-            <button
-                onClick={() => setRevealed(true)}
-                className="bg-green-500 text-white px-4 py-2 rounded mt-4"
-            >
-                Révéler les votes
-            </button>
-            {revealed && (
-                <div>
-                    <h2 className="text-xl font-bold">Votes:</h2>
-                    <div className="grid grid-cols-3 gap-4">
-                        {Object.entries(votes).map(([user, vote]) => (
-                            <div key={user} className="p-4 bg-gray-200 rounded shadow">
-                                <p className="font-bold">{user}</p>
-                                <p className="text-lg">{vote}</p>
-                            </div>
-                        ))}
+            <div className="flex space-x-4">
+                <button onClick={revealVotes} className="bg-blue-500 text-white px-4 py-2 rounded">
+                    Reveal
+                </button>
+                <button onClick={resetVotes} className="bg-red-500 text-white px-4 py-2 rounded">
+                    Reset
+                </button>
+            </div>
+            <div className="flex space-x-4">
+                {Object.entries(votes).map(([userName, vote]) => (
+                    <div key={userName} className="flex items-center space-x-2">
+                        <span className="font-bold">{userName}:</span>
+                        <span>{revealed ? vote : '?'}</span>
                     </div>
-                    <button
-                        onClick={resetVotes}
-                        className="bg-red-500 text-white px-4 py-2 rounded mt-4"
-                    >
-                        Reset
-                    </button>
-                </div>
-            )}
+                ))}
+            </div>
         </div>
     );
 }

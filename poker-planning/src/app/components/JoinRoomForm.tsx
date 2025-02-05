@@ -10,7 +10,7 @@ export default function JoinRoomForm() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        router.push(`/room/${roomId}?userName=${userName}`);
+        router.push(`/room/${roomId}/?username=${userName}`);
     };
 
     return (

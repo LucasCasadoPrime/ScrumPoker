@@ -1,24 +1,24 @@
 import { NextResponse } from 'next/server';
 
-const rooms: Record<string, { roomName: string; votes: Record<string, string> }> = {};
+const rooms: Record<string, { players: string[]; votes: Record<string, string> }> = {};
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const roomId = searchParams.get('roomId');
     if (!roomId || !rooms[roomId]) {
-        return NextResponse.json({ votes: {} });
+        return NextResponse.json({ votes: {} }, { status: 404 });
     }
-    return NextResponse.json({ votes: rooms[roomId].votes });
+    return NextResponse.json({ votes: rooms[roomId].votes }, { status: 200 });
 }
 
 
 export async function POST(request: Request) {
     try {
-        const { roomId, roomName, userName, vote } = await request.json();
+        const { roomId, userName, vote } = await request.json();
 
         // Ensure room exists and initialize votes if necessary
         if (!rooms[roomId]) {
-            rooms[roomId] = {roomName, votes: {} };  // Initialize room with an empty votes object
+            rooms[roomId] = { players: [userName], votes: {} };
         }
 
         if (!rooms[roomId].votes) {
