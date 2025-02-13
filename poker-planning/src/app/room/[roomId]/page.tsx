@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Ajoute cette ligne tout en haut de ton fichier
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -8,15 +8,20 @@ export default function RoomPage() {
     const { roomId } = useParams();
     const [socket, setSocket] = useState<Socket | null>(null);
     const [username, setUsername] = useState("");
-    const [messages, setMessages] = useState<any>(null);
+    const [messages, setMessages] = useState<{ users: string[]; votes: Record<string, number>; revealed: boolean } | null>(null);
     const [selectedCard, setSelectedCard] = useState<number | null>(null);
     const [joined, setJoined] = useState(false);
     const cards = [1, 2, 3, 5, 8, 13, 21];
 
     useEffect(() => {
         const newSocket = io("http://localhost:3000");
+
+        newSocket.on("roomUpdated", (data) => {
+            console.log("Données reçues :", data);  // Vérifier si c'est un objet et le bon format
+            setMessages(data);
+        });
+
         setSocket(newSocket);
-        newSocket.on("roomUpdated", (data) => setMessages(data));
 
         return () => {
             newSocket.disconnect();
@@ -80,7 +85,7 @@ export default function RoomPage() {
                         </div>
                     </div>
 
-                    {messages && (
+                    {messages && messages.users && messages.votes && messages.revealed !== undefined && (
                         <div className="mb-4">
                             <h3 className="font-bold">Votes:</h3>
                             {messages.users.map((user: string) => (
