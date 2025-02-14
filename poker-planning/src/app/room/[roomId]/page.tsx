@@ -14,7 +14,10 @@ export default function RoomPage() {
     const cards = [1, 2, 3, 5, 8, 13, 21];
 
     useEffect(() => {
-        const newSocket = io("https://scrumpoker-q1b4.onrender.com:3000");
+        const newSocket = io("https://scrumpoker-q1b4.onrender.com", {
+            transports: ["websocket"]
+        });
+
 
         newSocket.on("roomUpdated", (data) => {
             console.log("Données reçues :", data);  // Vérifier si c'est un objet et le bon format

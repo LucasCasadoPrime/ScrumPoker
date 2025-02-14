@@ -8,15 +8,16 @@ const handle = app.getRequestHandler();
 
 const rooms = {};
 
-app.prepare((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
-});
-
 app.prepare().then(() => {
     const server = http.createServer((req, res) => handle(req, res));
     const io = new Server(server, { cors: { origin: "*", methods: ["GET", "POST"] } });
+
+    server.on('request', (req, res) => {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET,POST');
+        res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    });
+
 
     io.on('connection', (socket) => {
         console.log(`🟢 Connexion : ${socket.id}`);
