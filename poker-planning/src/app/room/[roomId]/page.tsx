@@ -14,7 +14,7 @@ export default function RoomPage() {
     const cards = [1, 2, 3, 5, 8, "☕️", "❓"];
 
     useEffect(() => {
-        const newSocket = io("https://scrumpoker-q1b4.onrender.com:3000", {
+        const newSocket = io("https://scrumpoker-q1b4.onrender.com", {
             transports: ["websocket"]
         });
 

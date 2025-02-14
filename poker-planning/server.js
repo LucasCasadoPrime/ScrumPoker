@@ -105,5 +105,5 @@ app.prepare().then(() => {
         });
     });
 
-    server.listen(3000, () => console.log('🚀 Server ready on https://scrumpoker-q1b4.onrender.com:3000'));
+    server.listen(3000, () => console.log('🚀 Server ready on https://scrumpoker-q1b4.onrender.com'));
 });
