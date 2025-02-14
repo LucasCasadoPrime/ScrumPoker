@@ -104,5 +104,5 @@ app.prepare().then(() => {
         });
     });
 
-    server.listen(3000, () => console.log('🚀 Serveur en ligne sur https://scrumpoker-e4kc.onrender.com:3000'));
+    server.listen(3000, () => console.log('🚀 Server ready on https://scrumpoker-q1b4.onrender.com:3000'));
 });
