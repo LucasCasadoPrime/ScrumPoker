@@ -13,8 +13,10 @@ export default function RoomPage() {
     const [joined, setJoined] = useState(false);
     const cards = [1, 2, 3, 5, 8, "☕️", "❓"];
 
+    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3000";
+
     useEffect(() => {
-        const newSocket = io("http://localhost:3000", {
+        const newSocket = io(socketUrl, {
             transports: ["websocket"]
         });
 

@@ -1,10 +1,14 @@
 const next = require('next');
 const http = require('http');
+
+require('dotenv').config();
+
 const { Server } = require('socket.io');
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
+const PORT = process.env.PORT;
 
 const rooms = {};
 
@@ -105,5 +109,5 @@ app.prepare().then(() => {
         });
     });
 
-    server.listen(3000, () => console.log('🚀 Server ready on http://localhost:3000'));
+    server.listen(PORT, () => console.log('🚀 Server ready on https://f453-185-71-148-21.ngrok-free.app'));
 });
